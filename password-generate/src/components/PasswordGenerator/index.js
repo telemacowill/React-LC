@@ -1,29 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useEffect } from "react";
+
+import PasswordBox from "../PasswordBox/";
+import CopyPasswordButton from "../CopyPasswordButton";
 
 import "./styles.css";
 
 const PasswordGenerator = () => {
-  const [password, setPassword] = ("");
+  const [password, setPassword] = useState("");
   const [passwordLenght, setPasswordLength] = useState(8);
   const [digitsLenght, setDigitsLength] = useState(2);
   const [symbolsLenght, setSymbolsLength] = useState(2);
 
-  
   useEffect(() => {
     const draftPassword = [];
 
-    draftPassword.push("1")
-    draftPassword.push("2")
-    draftPassword.push("$")
-    draftPassword.push("#")
-    draftPassword.push("x")
-    draftPassword.push("x")
-    draftPassword.push("x")
-    draftPassword.push("x")
-    draftPassword.push("x")
-    draftPassword.push("x")
-    draftPassword.push("x")
-    draftPassword.push("x")
+    let lettersLenght = passwordLenght - digitsLenght - symbolsLenght;
+    if (lettersLenght < 0) lettersLenght = 0;
+
+    draftPassword.push(...Array.from({length:digitsLenght}, randomDigit));
+    draftPassword.push(...Array.from({length:symbolsLenght}, randomSymbol));
+    draftPassword.push(...Array.from({length:lettersLenght}, randomLetter));    
 
     setPassword(
       draftPassword
@@ -33,6 +30,25 @@ const PasswordGenerator = () => {
     );
   }, [passwordLenght, digitsLenght, symbolsLenght]);
 
+  const randomDigit = () => {
+    const digits = "0123456789";
+
+    return digits[Math.floor(Math.random() * digits.length)];
+  };
+
+  const randomSymbol = () => {
+    const symbols = "#$&(+,./;?@[]^{}";
+
+    return symbols[Math.floor(Math.random() * symbols.length)];
+  };
+
+  const randomLetter = () => {
+    const letters = "abcdefghijlmnopqrstuvwxyz";
+
+    const letter = letters[Math.floor(Math.random() * letters.length)];
+
+    return Math.random() >= 0.5 ? letter : letter.toUpperCase();
+  };
 
   return <>
     <div className="slider">
@@ -72,7 +88,8 @@ const PasswordGenerator = () => {
       <span>{symbolsLenght}</span>
     </div>
 
-    <h1>{password}</h1>
+    <PasswordBox password={password}/>
+    <CopyPasswordButton password={password}/>
 
   </>;
 };
